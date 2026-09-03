@@ -10,7 +10,7 @@
   content="width=device-width, initial-scale=1.0">
 
 <title>
-Pase de Lista QR - COBACH 234
+Pase de Lista QR - Mtra. Monsait Cruz
 </title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -20,9 +20,9 @@ Pase de Lista QR - COBACH 234
 
 body {
   margin: 0;
-  padding: 15px;
-  background: #f1f4f8;
+  padding: 14px;
   font-family: Arial, sans-serif;
+  background: #eef2f6;
   text-align: center;
 }
 
@@ -32,11 +32,11 @@ body {
 }
 
 .encabezado {
-  background: #123a63;
+  background: #12385d;
   color: white;
-  padding: 20px;
   border-radius: 18px;
-  margin-bottom: 15px;
+  padding: 20px;
+  margin-bottom: 14px;
 }
 
 .encabezado h1 {
@@ -50,9 +50,9 @@ body {
 
 .tarjeta {
   background: white;
-  padding: 18px;
-  border-radius: 18px;
-  margin-bottom: 15px;
+  padding: 17px;
+  border-radius: 17px;
+  margin-bottom: 14px;
   box-shadow: 0 3px 12px rgba(0,0,0,.12);
 }
 
@@ -61,41 +61,26 @@ input {
   width: 100%;
   box-sizing: border-box;
   padding: 13px;
-  font-size: 17px;
+  font-size: 16px;
   border-radius: 10px;
   border: 1px solid #bbb;
-  margin-bottom: 10px;
+  margin: 7px 0 12px;
 }
 
-button {
-  border: 0;
-  border-radius: 10px;
-  padding: 13px 16px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.boton-azul {
-  background: #174f7c;
-  color: white;
-}
-
-.boton-rojo {
-  background: #b4202a;
-  color: white;
-}
-
-.boton-gris {
-  background: #e2e6ea;
+label {
+  display: block;
+  text-align: left;
+  font-weight: bold;
 }
 
 #reader {
   width: 100%;
+  margin-top: 12px;
 }
 
 #resultado {
   display: none;
-  padding: 17px;
+  padding: 18px;
   border-radius: 14px;
   margin-top: 15px;
 }
@@ -106,18 +91,25 @@ button {
 }
 
 .duplicado {
-  background: #fff2c8;
-  color: #735500;
+  background: #fff1bd;
+  color: #715400;
 }
 
 .error {
-  background: #ffe1e1;
-  color: #990000;
+  background: #ffe0e0;
+  color: #980000;
+}
+
+.otrogrupo {
+  background: #ffd9d9;
+  color: #900000;
+  border: 2px solid #c62828;
 }
 
 .nombre {
   font-size: 21px;
   font-weight: bold;
+  margin-bottom: 8px;
 }
 
 .dato {
@@ -126,50 +118,76 @@ button {
 
 .contadores {
   display: flex;
-  gap: 8px;
+  gap: 7px;
   margin-top: 10px;
 }
 
 .contador {
   flex: 1;
-  padding: 12px 5px;
+  padding: 11px 3px;
+  background: #edf2f6;
   border-radius: 10px;
-  background: #eef3f7;
 }
 
 .numero {
-  font-size: 24px;
+  font-size: 23px;
   font-weight: bold;
 }
 
 .etiqueta {
-  font-size: 12px;
+  font-size: 11px;
 }
 
-.lista {
-  text-align: left;
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 12px;
+button {
+  border: 0;
+  padding: 13px;
+  border-radius: 10px;
+  font-size: 15px;
+  cursor: pointer;
 }
 
-.alumno {
-  padding: 8px;
-  border-bottom: 1px solid #ddd;
+.botonAzul {
+  background: #174f7c;
+  color: white;
 }
 
-.oculto {
-  display: none;
+.botonRojo {
+  background: #b4202a;
+  color: white;
+}
+
+.botonGris {
+  background: #e0e5e9;
 }
 
 .botones {
   display: flex;
-  gap: 8px;
+  gap: 7px;
   margin-top: 10px;
 }
 
 .botones button {
   flex: 1;
+}
+
+.lista {
+  text-align: left;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: 12px;
+}
+
+.alumno {
+  padding: 9px 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+.estadoClase {
+  background: #e8f0f8;
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 5px;
+  font-size: 14px;
 }
 
 </style>
@@ -184,14 +202,16 @@ button {
 
 <div class="encabezado">
 
-<h1>📷 Pase de Lista QR</h1>
+<h1>
+📷 Pase de Lista QR
+</h1>
 
 <p>
-COBACH 234
+COBACH Plantel 234
 </p>
 
 <p>
-Taller de Robótica
+Mtra. Monsait Cruz
 </p>
 
 </div>
@@ -199,38 +219,49 @@ Taller de Robótica
 
 <div class="tarjeta">
 
-<strong>
-Grupo para consultar:
-</strong>
-
-<br><br>
+<label>
+Materia
+</label>
 
 <select
-  id="grupoConsulta"
-  onchange="actualizarResumen()">
+  id="materia"
+  onchange="cambiarMateria()">
 
-<option value="5°A">
-5°A
-</option>
-
-<option value="5°B">
-5°B
-</option>
-
-<option value="5°C">
-5°C
-</option>
-
-<option value="5°D">
-5°D
+<option value="">
+Cargando materias...
 </option>
 
 </select>
 
 
+<label>
+Grupo
+</label>
+
+<select
+  id="grupo"
+  onchange="cambiarGrupo()">
+
+<option value="">
+Selecciona primero una materia
+</option>
+
+</select>
+
+
+<div
+  id="estadoClase"
+  class="estadoClase">
+
+Selecciona la materia y el grupo.
+
+</div>
+
+
 <div class="contadores">
 
 <div class="contador">
+
 <div
   class="numero"
   id="presentes">
@@ -240,10 +271,12 @@ Grupo para consultar:
 <div class="etiqueta">
 PRESENTES
 </div>
+
 </div>
 
 
 <div class="contador">
+
 <div
   class="numero"
   id="pendientes">
@@ -253,10 +286,27 @@ PRESENTES
 <div class="etiqueta">
 PENDIENTES
 </div>
+
 </div>
 
 
 <div class="contador">
+
+<div
+  class="numero"
+  id="faltas">
+0
+</div>
+
+<div class="etiqueta">
+FALTAS
+</div>
+
+</div>
+
+
+<div class="contador">
+
 <div
   class="numero"
   id="total">
@@ -266,6 +316,7 @@ PENDIENTES
 <div class="etiqueta">
 TOTAL
 </div>
+
 </div>
 
 </div>
@@ -276,11 +327,11 @@ TOTAL
 <div class="tarjeta">
 
 <h3>
-Escanear QR
+📷 Escanear QR
 </h3>
 
 <p>
-El grupo se detecta automáticamente.
+Selecciona primero la materia y el grupo.
 </p>
 
 <div id="reader"></div>
@@ -293,19 +344,19 @@ El grupo se detecta automáticamente.
 <div class="tarjeta">
 
 <h3>
-Registro manual
+✏️ Registro manual
 </h3>
 
 <input
   id="matriculaManual"
   type="text"
-  placeholder="Escribe la matrícula">
+  placeholder="Matrícula del alumno">
 
 <button
-  class="boton-azul"
+  class="botonAzul"
   onclick="registroManual()">
 
-Registrar matrícula
+Registrar asistencia
 
 </button>
 
@@ -315,25 +366,35 @@ Registrar matrícula
 <div class="tarjeta">
 
 <h3>
-Asistencia de hoy
+📋 Asistencia de hoy
 </h3>
 
 
 <div class="botones">
 
 <button
-  class="boton-gris"
+  class="botonGris"
   onclick="mostrarPresentes()">
 
-Presentes
+✅ Presentes
 
 </button>
 
+
 <button
-  class="boton-gris"
+  class="botonGris"
   onclick="mostrarPendientes()">
 
-Pendientes
+○ Pendientes
+
+</button>
+
+
+<button
+  class="botonGris"
+  onclick="mostrarFaltas()">
+
+❌ Faltas
 
 </button>
 
@@ -344,6 +405,8 @@ Pendientes
   id="listaAlumnos"
   class="lista">
 
+Selecciona una clase.
+
 </div>
 
 </div>
@@ -352,7 +415,7 @@ Pendientes
 <div class="tarjeta">
 
 <button
-  class="boton-rojo"
+  class="botonRojo"
   onclick="confirmarFinalizar()">
 
 Finalizar pase de lista
@@ -361,8 +424,8 @@ Finalizar pase de lista
 
 <p style="font-size:13px;">
 
-Los alumnos pendientes se marcarán como
-<strong>FALTA</strong>.
+Al finalizar, los alumnos pendientes
+se registrarán como <strong>FALTA</strong>.
 
 </p>
 
@@ -378,28 +441,228 @@ const URL_SCRIPT =
 "https://script.google.com/macros/s/AKfycbyi9k4fsH2J-dDIS1WxLJQXmb3O1I2t-hp2mAyOJlcS0Szvgs7_b8UMn5aAglqfcMpnog/exec";
 
 
+let clases = {};
+
+let resumenActual = null;
+
 let procesando = false;
 
 let ultimoCodigo = "";
 
 let ultimoTiempo = 0;
 
-let resumenActual = null;
+
+// =====================================================
+// COMUNICACIÓN CON APPS SCRIPT
+// =====================================================
+
+async function llamarScript(parametros) {
+
+  const url =
+    URL_SCRIPT +
+    "?" +
+    new URLSearchParams(parametros).toString();
 
 
-// ------------------------------------------
-// MOSTRAR MENSAJE
-// ------------------------------------------
+  const respuesta =
+    await fetch(
+      url,
+      {
+        method: "GET",
+        redirect: "follow",
+        cache: "no-store"
+      }
+    );
+
+
+  const texto =
+    await respuesta.text();
+
+
+  return JSON.parse(texto);
+}
+
+
+// =====================================================
+// CARGAR MATERIAS Y GRUPOS
+// =====================================================
+
+async function cargarClases() {
+
+  try {
+
+    const datos =
+      await llamarScript({
+        accion: "clases"
+      });
+
+
+    if (!datos.ok) {
+
+      alert(datos.mensaje);
+
+      return;
+    }
+
+
+    clases = datos.clases;
+
+
+    const materiaSelect =
+      document.getElementById("materia");
+
+
+    materiaSelect.innerHTML =
+      '<option value="">Selecciona una materia</option>';
+
+
+    Object.keys(clases)
+      .forEach(function(materia) {
+
+        const opcion =
+          document.createElement("option");
+
+        opcion.value = materia;
+        opcion.textContent = materia;
+
+        materiaSelect.appendChild(opcion);
+
+      });
+
+
+  } catch (error) {
+
+    alert(
+      "No se pudieron cargar las materias."
+    );
+
+  }
+}
+
+
+// =====================================================
+// CAMBIO DE MATERIA
+// =====================================================
+
+function cambiarMateria() {
+
+  const materia =
+    document
+      .getElementById("materia")
+      .value;
+
+
+  const grupoSelect =
+    document.getElementById("grupo");
+
+
+  grupoSelect.innerHTML =
+    '<option value="">Selecciona un grupo</option>';
+
+
+  if (
+    !materia ||
+    !clases[materia]
+  ) {
+
+    limpiarResumen();
+
+    return;
+  }
+
+
+  clases[materia]
+    .forEach(function(grupo) {
+
+      const opcion =
+        document.createElement("option");
+
+      opcion.value = grupo;
+      opcion.textContent = grupo;
+
+      grupoSelect.appendChild(opcion);
+
+    });
+
+
+  limpiarResumen();
+}
+
+
+// =====================================================
+// CAMBIO DE GRUPO
+// =====================================================
+
+function cambiarGrupo() {
+
+  const materia =
+    document.getElementById("materia").value;
+
+  const grupo =
+    document.getElementById("grupo").value;
+
+
+  if (materia && grupo) {
+
+    document
+      .getElementById("estadoClase")
+      .innerHTML =
+        "<strong>" +
+        escapar(materia) +
+        "</strong><br>" +
+        escapar(grupo);
+
+
+    actualizarResumen();
+
+  } else {
+
+    limpiarResumen();
+
+  }
+}
+
+
+// =====================================================
+// OBTENER CLASE ACTUAL
+// =====================================================
+
+function claseActual() {
+
+  return {
+
+    materia:
+      document
+        .getElementById("materia")
+        .value,
+
+    grupo:
+      document
+        .getElementById("grupo")
+        .value
+
+  };
+}
+
+
+// =====================================================
+// MOSTRAR RESULTADO
+// =====================================================
 
 function mostrarResultado(datos) {
 
   const caja =
     document.getElementById("resultado");
 
+
   caja.style.display = "block";
 
 
-  if (datos.ok) {
+  if (datos.grupoIncorrecto) {
+
+    caja.className = "otrogrupo";
+
+  } else if (datos.ok) {
 
     caja.className = "exito";
 
@@ -412,7 +675,9 @@ function mostrarResultado(datos) {
     caja.className = "duplicado";
 
     if (navigator.vibrate) {
-      navigator.vibrate([100,100,100]);
+      navigator.vibrate(
+        [100,100,100]
+      );
     }
 
   } else {
@@ -422,12 +687,12 @@ function mostrarResultado(datos) {
   }
 
 
-  let contenido = "";
+  let html = "";
 
 
   if (datos.nombre) {
 
-    contenido +=
+    html +=
       '<div class="nombre">' +
       escapar(datos.nombre) +
       '</div>';
@@ -435,23 +700,38 @@ function mostrarResultado(datos) {
   }
 
 
-  if (datos.grupo) {
+  if (datos.grupoIncorrecto) {
 
-    contenido +=
+    html +=
       '<div class="dato">' +
-      'Grupo: ' +
-      escapar(datos.grupo) +
-      '</div>';
+      'Pertenece a: <strong>' +
+      escapar(datos.grupoAlumno) +
+      '</strong></div>';
 
+    html +=
+      '<div class="dato">' +
+      'Clase seleccionada: <strong>' +
+      escapar(datos.grupoSeleccionado) +
+      '</strong></div>';
+
+  } else {
+
+    if (datos.grupo) {
+
+      html +=
+        '<div class="dato">' +
+        'Grupo: ' +
+        escapar(datos.grupo) +
+        '</div>';
+    }
   }
 
 
-  if (datos.matricula) {
+  if (datos.materia) {
 
-    contenido +=
+    html +=
       '<div class="dato">' +
-      'Matrícula: ' +
-      escapar(datos.matricula) +
+      escapar(datos.materia) +
       '</div>';
 
   }
@@ -459,7 +739,7 @@ function mostrarResultado(datos) {
 
   if (datos.hora) {
 
-    contenido +=
+    html +=
       '<div class="dato">' +
       'Hora: ' +
       escapar(datos.hora) +
@@ -468,87 +748,64 @@ function mostrarResultado(datos) {
   }
 
 
-  contenido +=
+  html +=
     '<div class="dato"><strong>' +
     escapar(datos.mensaje || "") +
     '</strong></div>';
 
 
-  caja.innerHTML = contenido;
+  caja.innerHTML = html;
 }
 
 
-// ------------------------------------------
-// SEGURIDAD PARA TEXTO
-// ------------------------------------------
-
-function escapar(texto) {
-
-  const div =
-    document.createElement("div");
-
-  div.textContent =
-    String(texto || "");
-
-  return div.innerHTML;
-}
-
-
-// ------------------------------------------
-// LLAMAR APPS SCRIPT
-// ------------------------------------------
-
-async function llamarScript(parametros) {
-
-  const url =
-    URL_SCRIPT +
-    "?" +
-    new URLSearchParams(parametros).toString();
-
-  const respuesta =
-    await fetch(
-      url,
-      {
-        method: "GET",
-        redirect: "follow",
-        cache: "no-store"
-      }
-    );
-
-  const texto =
-    await respuesta.text();
-
-  return JSON.parse(texto);
-}
-
-
-// ------------------------------------------
-// REGISTRAR QR
-// ------------------------------------------
+// =====================================================
+// REGISTRAR
+// =====================================================
 
 async function registrar(matricula) {
+
+  const clase =
+    claseActual();
+
+
+  if (
+    !clase.materia ||
+    !clase.grupo
+  ) {
+
+    mostrarResultado({
+      ok: false,
+      mensaje:
+        "Selecciona primero la materia y el grupo."
+    });
+
+    procesando = false;
+
+    return;
+  }
+
 
   try {
 
     const datos =
       await llamarScript({
-        accion: "registrar",
-        matricula: matricula
+
+        accion:
+          "registrar",
+
+        matricula:
+          matricula,
+
+        materia:
+          clase.materia,
+
+        grupo:
+          clase.grupo
+
       });
 
 
     mostrarResultado(datos);
-
-
-    // Si detectó un grupo,
-    // mostramos automáticamente ese grupo.
-    if (datos.grupo) {
-
-      document
-        .getElementById("grupoConsulta")
-        .value = datos.grupo;
-
-    }
 
 
     await actualizarResumen();
@@ -562,23 +819,21 @@ async function registrar(matricula) {
         "No se pudo conectar con Google Sheets."
     });
 
-    console.error(error);
-
   } finally {
 
     setTimeout(function() {
 
       procesando = false;
 
-    }, 1500);
+    }, 1400);
 
   }
 }
 
 
-// ------------------------------------------
-// QR LEÍDO
-// ------------------------------------------
+// =====================================================
+// QR
+// =====================================================
 
 function onScanSuccess(decodedText) {
 
@@ -616,13 +871,14 @@ function onScanSuccess(decodedText) {
 
 function onScanFailure(error) {
 
-  // La cámara continúa buscando.
+  // La cámara continúa buscando QR.
+
 }
 
 
-// ------------------------------------------
-// CREAR ESCÁNER
-// ------------------------------------------
+// =====================================================
+// ESCÁNER
+// =====================================================
 
 const scanner =
   new Html5QrcodeScanner(
@@ -638,7 +894,8 @@ const scanner =
         height: 240
       },
 
-      rememberLastUsedCamera: true
+      rememberLastUsedCamera:
+        true
 
     },
 
@@ -652,16 +909,18 @@ scanner.render(
 );
 
 
-// ------------------------------------------
+// =====================================================
 // REGISTRO MANUAL
-// ------------------------------------------
+// =====================================================
 
 function registroManual() {
 
   const campo =
-    document.getElementById(
-      "matriculaManual"
-    );
+    document
+      .getElementById(
+        "matriculaManual"
+      );
+
 
   const matricula =
     campo.value.trim();
@@ -670,7 +929,7 @@ function registroManual() {
   if (!matricula) {
 
     alert(
-      "Escribe una matrícula."
+      "Escribe la matrícula del alumno."
     );
 
     return;
@@ -690,57 +949,74 @@ function registroManual() {
 }
 
 
-// ------------------------------------------
+// =====================================================
 // RESUMEN
-// ------------------------------------------
+// =====================================================
 
 async function actualizarResumen() {
 
-  const grupo =
-    document
-      .getElementById(
-        "grupoConsulta"
-      )
-      .value;
+  const clase =
+    claseActual();
+
+
+  if (
+    !clase.materia ||
+    !clase.grupo
+  ) {
+
+    limpiarResumen();
+
+    return;
+  }
 
 
   try {
 
     const datos =
       await llamarScript({
-        accion: "resumen",
-        grupo: grupo
+
+        accion:
+          "resumen",
+
+        materia:
+          clase.materia,
+
+        grupo:
+          clase.grupo
+
       });
 
 
     if (!datos.ok) {
+
       return;
     }
 
 
-    resumenActual = datos;
+    resumenActual =
+      datos;
 
 
     document
-      .getElementById(
-        "presentes"
-      )
+      .getElementById("presentes")
       .textContent =
         datos.cantidadPresentes;
 
 
     document
-      .getElementById(
-        "pendientes"
-      )
+      .getElementById("pendientes")
       .textContent =
-        datos.pendientes.length;
+        datos.cantidadPendientes;
 
 
     document
-      .getElementById(
-        "total"
-      )
+      .getElementById("faltas")
+      .textContent =
+        datos.cantidadFaltas;
+
+
+    document
+      .getElementById("total")
       .textContent =
         datos.total;
 
@@ -756,93 +1032,121 @@ async function actualizarResumen() {
 }
 
 
-// ------------------------------------------
-// LISTA PRESENTES
-// ------------------------------------------
+// =====================================================
+// LIMPIAR RESUMEN
+// =====================================================
+
+function limpiarResumen() {
+
+  resumenActual = null;
+
+  document
+    .getElementById("presentes")
+    .textContent = "0";
+
+  document
+    .getElementById("pendientes")
+    .textContent = "0";
+
+  document
+    .getElementById("faltas")
+    .textContent = "0";
+
+  document
+    .getElementById("total")
+    .textContent = "0";
+
+
+  document
+    .getElementById("listaAlumnos")
+    .innerHTML =
+      "Selecciona una clase.";
+
+
+  document
+    .getElementById("estadoClase")
+    .innerHTML =
+      "Selecciona la materia y el grupo.";
+}
+
+
+// =====================================================
+// LISTAS
+// =====================================================
 
 function mostrarPresentes() {
 
-  const lista =
-    document.getElementById(
-      "listaAlumnos"
-    );
-
-
-  if (!resumenActual) {
-
-    lista.innerHTML =
-      "Sin información.";
-
-    return;
-  }
-
-
-  if (
-    resumenActual.presentes.length === 0
-  ) {
-
-    lista.innerHTML =
-      "Todavía no hay alumnos presentes.";
-
-    return;
-  }
-
-
-  lista.innerHTML =
-    resumenActual.presentes
-      .map(function(alumno) {
-
-        return (
-          '<div class="alumno">' +
-          '✅ ' +
-          escapar(alumno.nombre) +
-          '</div>'
-        );
-
-      })
-      .join("");
+  mostrarLista(
+    "presentes",
+    "✅",
+    "Todavía no hay alumnos presentes."
+  );
 }
 
-
-// ------------------------------------------
-// LISTA PENDIENTES
-// ------------------------------------------
 
 function mostrarPendientes() {
 
+  mostrarLista(
+    "pendientes",
+    "○",
+    "No hay alumnos pendientes."
+  );
+}
+
+
+function mostrarFaltas() {
+
+  mostrarLista(
+    "faltas",
+    "❌",
+    "No hay faltas registradas."
+  );
+}
+
+
+function mostrarLista(
+  tipo,
+  icono,
+  mensajeVacio
+) {
+
   const lista =
-    document.getElementById(
-      "listaAlumnos"
-    );
+    document
+      .getElementById(
+        "listaAlumnos"
+      );
 
 
   if (!resumenActual) {
 
     lista.innerHTML =
-      "Sin información.";
+      "Selecciona una clase.";
 
     return;
   }
 
 
-  if (
-    resumenActual.pendientes.length === 0
-  ) {
+  const alumnos =
+    resumenActual[tipo] || [];
+
+
+  if (alumnos.length === 0) {
 
     lista.innerHTML =
-      "✅ No hay alumnos pendientes.";
+      mensajeVacio;
 
     return;
   }
 
 
   lista.innerHTML =
-    resumenActual.pendientes
+    alumnos
       .map(function(alumno) {
 
         return (
           '<div class="alumno">' +
-          '○ ' +
+          icono +
+          " " +
           escapar(alumno.nombre) +
           '</div>'
         );
@@ -852,25 +1156,36 @@ function mostrarPendientes() {
 }
 
 
-// ------------------------------------------
+// =====================================================
 // FINALIZAR
-// ------------------------------------------
+// =====================================================
 
 async function confirmarFinalizar() {
 
-  const grupo =
-    document
-      .getElementById(
-        "grupoConsulta"
-      )
-      .value;
+  const clase =
+    claseActual();
+
+
+  if (
+    !clase.materia ||
+    !clase.grupo
+  ) {
+
+    alert(
+      "Selecciona primero la materia y el grupo."
+    );
+
+    return;
+  }
 
 
   const aceptar =
     confirm(
-      "¿Finalizar el pase de lista de " +
-      grupo +
-      "?\n\n" +
+      "¿Finalizar el pase de lista?\n\n" +
+      clase.materia +
+      "\nGrupo " +
+      clase.grupo +
+      "\n\n" +
       "Los alumnos pendientes serán marcados como FALTA."
     );
 
@@ -884,14 +1199,22 @@ async function confirmarFinalizar() {
 
     const datos =
       await llamarScript({
-        accion: "finalizar",
-        grupo: grupo
+
+        accion:
+          "finalizar",
+
+        materia:
+          clase.materia,
+
+        grupo:
+          clase.grupo
+
       });
 
 
     alert(
       datos.mensaje +
-      "\nFaltas registradas: " +
+      "\n\nFaltas registradas: " +
       (datos.faltasAgregadas || 0)
     );
 
@@ -909,8 +1232,27 @@ async function confirmarFinalizar() {
 }
 
 
-// Cargar contador al abrir
-actualizarResumen();
+// =====================================================
+// ESCAPAR TEXTO
+// =====================================================
+
+function escapar(texto) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    String(texto || "");
+
+  return div.innerHTML;
+}
+
+
+// =====================================================
+// INICIO
+// =====================================================
+
+cargarClases();
 
 </script>
 

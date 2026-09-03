@@ -143,6 +143,11 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
 .botonAzul {
   background: #174f7c;
   color: white;
@@ -150,6 +155,11 @@ button {
 
 .botonVerde {
   background: #19733d;
+  color: white;
+}
+
+.botonNaranja {
+  background: #d88400;
   color: white;
 }
 
@@ -194,7 +204,6 @@ button {
 }
 
 .estadoClase {
-  background: #e8f0f8;
   border-radius: 10px;
   padding: 12px;
   margin-top: 5px;
@@ -205,6 +214,12 @@ button {
   background: #dff4e3;
   color: #12652a;
   border: 1px solid #94c9a1;
+}
+
+.paseCerrado {
+  background: #fff1bd;
+  color: #715400;
+  border: 1px solid #d8bd53;
 }
 
 .sesionInactiva {
@@ -264,11 +279,19 @@ button {
 </button>
 
 <button
+  id="btnCerrarPase"
+  class="botonNaranja botonGrande"
+  onclick="confirmarCerrarPase()"
+  style="display:none;">
+  ✅ Cerrar pase de lista
+</button>
+
+<button
   id="btnFinalizar"
   class="botonRojo botonGrande"
-  onclick="confirmarFinalizar()"
+  onclick="confirmarFinalizarClase()"
   style="display:none;">
-  ⏹️ Finalizar pase de lista
+  ⏹️ Finalizar clase
 </button>
 
 <div class="contadores">
@@ -326,6 +349,7 @@ Inicia una clase antes de escanear.
   placeholder="Matrícula del alumno">
 
 <button
+  id="btnManual"
   class="botonAzul"
   onclick="registroManual()">
   Registrar asistencia
@@ -375,6 +399,7 @@ let sesionActual = null;
 let resumenActual = null;
 
 let procesando = false;
+let iniciandoClase = false;
 let ultimoCodigo = "";
 let ultimoTiempo = 0;
 
@@ -497,15 +522,16 @@ async function cambiarGrupo() {
   sesionActual = null;
   resumenActual = null;
 
+  limpiarResumen();
+
   const materia =
     document.getElementById("materia").value;
 
   const grupo =
     document.getElementById("grupo").value;
 
-  limpiarResumen();
-
   if (!materia || !grupo) {
+
     actualizarInterfazSesion();
     return;
   }
@@ -515,7 +541,7 @@ async function cambiarGrupo() {
 
 
 // =====================================================
-// BUSCAR SESIÓN ACTIVA
+// BUSCAR SESIÓN ABIERTA
 // =====================================================
 
 async function buscarSesionActiva() {
@@ -571,6 +597,10 @@ async function buscarSesionActiva() {
 
 async function iniciarClase() {
 
+  if (iniciandoClase) {
+    return;
+  }
+
   const materia =
     document.getElementById("materia").value;
 
@@ -602,6 +632,24 @@ async function iniciarClase() {
     return;
   }
 
+  iniciandoClase = true;
+
+  const btn =
+    document.getElementById("btnIniciar");
+
+  btn.disabled = true;
+  btn.textContent = "⏳ Iniciando clase...";
+
+  const estado =
+    document.getElementById("estadoClase");
+
+  estado.className =
+    "estadoClase sesionInactiva";
+
+  estado.innerHTML =
+    "<strong>⏳ Iniciando clase...</strong><br>" +
+    "Espera unos segundos.";
+
   try {
 
     const datos =
@@ -631,28 +679,43 @@ async function iniciarClase() {
 
       sesionActual = datos.sesion;
 
-      alert(
-        "Ya había una sesión activa para esta clase. Se continuará con esa sesión."
-      );
+      mostrarResultado({
+        ok: true,
+        mensaje: "✅ SE CONTINÚA CON LA SESIÓN ABIERTA",
+        materia: datos.sesion.materia,
+        grupo: datos.sesion.grupo
+      });
 
     } else {
 
-      alert(datos.mensaje || "No fue posible iniciar la clase.");
+      alert(
+        datos.mensaje ||
+        "No fue posible iniciar la clase."
+      );
+
       return;
     }
 
     await actualizarResumen();
-    actualizarInterfazSesion();
 
   } catch (error) {
 
     alert("No fue posible iniciar la clase.");
+
+  } finally {
+
+    iniciandoClase = false;
+
+    btn.disabled = false;
+    btn.textContent = "▶️ Iniciar clase";
+
+    actualizarInterfazSesion();
   }
 }
 
 
 // =====================================================
-// INTERFAZ DE SESIÓN
+// INTERFAZ SEGÚN ESTADO
 // =====================================================
 
 function actualizarInterfazSesion() {
@@ -662,6 +725,9 @@ function actualizarInterfazSesion() {
 
   const btnIniciar =
     document.getElementById("btnIniciar");
+
+  const btnCerrar =
+    document.getElementById("btnCerrarPase");
 
   const btnFinalizar =
     document.getElementById("btnFinalizar");
@@ -675,28 +741,7 @@ function actualizarInterfazSesion() {
   const grupo =
     document.getElementById("grupo").value;
 
-  if (sesionActual) {
-
-    estado.className =
-      "estadoClase sesionActiva";
-
-    estado.innerHTML =
-      "<strong>🟢 SESIÓN ACTIVA</strong><br>" +
-      escapar(sesionActual.materia) +
-      "<br>Grupo " +
-      escapar(sesionActual.grupo) +
-      "<br>Retardo después de " +
-      escapar(sesionActual.minutosRetardo) +
-      " minutos";
-
-    btnIniciar.style.display = "none";
-    btnFinalizar.style.display = "block";
-
-    textoEscaner.innerHTML =
-      "<strong>Escáner listo.</strong><br>" +
-      "Los QR se registrarán en esta sesión.";
-
-  } else {
+  if (!sesionActual) {
 
     estado.className =
       "estadoClase sesionInactiva";
@@ -704,7 +749,7 @@ function actualizarInterfazSesion() {
     if (materia && grupo) {
 
       estado.innerHTML =
-        "<strong>Sin sesión activa</strong><br>" +
+        "<strong>Sin sesión abierta</strong><br>" +
         escapar(materia) +
         "<br>Grupo " +
         escapar(grupo);
@@ -716,11 +761,57 @@ function actualizarInterfazSesion() {
     }
 
     btnIniciar.style.display = "block";
+    btnCerrar.style.display = "none";
     btnFinalizar.style.display = "none";
 
     textoEscaner.innerHTML =
       "Inicia una clase antes de escanear.";
+
+    return;
   }
+
+  if (sesionActual.estado === "PASE CERRADO") {
+
+    estado.className =
+      "estadoClase paseCerrado";
+
+    estado.innerHTML =
+      "<strong>🟠 PASE DE LISTA CERRADO</strong><br>" +
+      escapar(sesionActual.materia) +
+      "<br>Grupo " +
+      escapar(sesionActual.grupo) +
+      "<br><strong>La clase continúa abierta.</strong>";
+
+    btnIniciar.style.display = "none";
+    btnCerrar.style.display = "none";
+    btnFinalizar.style.display = "block";
+
+    textoEscaner.innerHTML =
+      "<strong>El escáner continúa activo.</strong><br>" +
+      "Los alumnos que lleguen ahora se registrarán como RETARDO.";
+
+    return;
+  }
+
+  estado.className =
+    "estadoClase sesionActiva";
+
+  estado.innerHTML =
+    "<strong>🟢 SESIÓN ACTIVA</strong><br>" +
+    escapar(sesionActual.materia) +
+    "<br>Grupo " +
+    escapar(sesionActual.grupo) +
+    "<br>Retardo después de " +
+    escapar(sesionActual.minutosRetardo) +
+    " minutos";
+
+  btnIniciar.style.display = "none";
+  btnCerrar.style.display = "block";
+  btnFinalizar.style.display = "block";
+
+  textoEscaner.innerHTML =
+    "<strong>Escáner listo.</strong><br>" +
+    "Los QR se registrarán en esta sesión.";
 }
 
 
@@ -762,10 +853,6 @@ function mostrarResultado(datos) {
 
     caja.className = "duplicado";
 
-    if (navigator.vibrate) {
-      navigator.vibrate([100,100,100]);
-    }
-
   } else {
 
     caja.className = "error";
@@ -784,14 +871,12 @@ function mostrarResultado(datos) {
   if (datos.grupoIncorrecto) {
 
     html +=
-      '<div class="dato">' +
-      'Pertenece a: <strong>' +
+      '<div class="dato">Pertenece a: <strong>' +
       escapar(datos.grupoAlumno) +
       '</strong></div>';
 
     html +=
-      '<div class="dato">' +
-      'Clase seleccionada: <strong>' +
+      '<div class="dato">Clase seleccionada: <strong>' +
       escapar(datos.grupoSeleccionado) +
       '</strong></div>';
 
@@ -901,8 +986,12 @@ function onScanSuccess(decodedText) {
   }
 
   procesando = true;
-  ultimoCodigo = decodedText.trim();
-  ultimoTiempo = ahora;
+
+  ultimoCodigo =
+    decodedText.trim();
+
+  ultimoTiempo =
+    ahora;
 
   registrar(decodedText.trim());
 }
@@ -964,6 +1053,7 @@ function registroManual() {
   }
 
   procesando = true;
+
   campo.value = "";
 
   registrar(matricula);
@@ -995,6 +1085,11 @@ async function actualizarResumen() {
     }
 
     resumenActual = datos;
+
+    if (datos.sesion) {
+      sesionActual.estado =
+        datos.sesion.estado;
+    }
 
     document.getElementById("presentes").textContent =
       datos.cantidadPresentes;
@@ -1105,7 +1200,9 @@ function mostrarLista(
 
   if (alumnos.length === 0) {
 
-    lista.innerHTML = mensajeVacio;
+    lista.innerHTML =
+      mensajeVacio;
+
     return;
   }
 
@@ -1126,30 +1223,125 @@ function mostrarLista(
 
 
 // =====================================================
-// FINALIZAR
+// CERRAR PASE DE LISTA
 // =====================================================
 
-async function confirmarFinalizar() {
+async function confirmarCerrarPase() {
 
   if (!sesionActual) {
 
-    alert("No hay una sesión activa.");
+    alert("No hay una sesión abierta.");
+    return;
+  }
+
+  if (sesionActual.estado === "PASE CERRADO") {
+
+    alert("El pase de lista ya está cerrado.");
     return;
   }
 
   const aceptar =
     confirm(
-      "¿Finalizar el pase de lista?\n\n" +
+      "¿Cerrar el pase de lista?\n\n" +
       sesionActual.materia +
       "\nGrupo " +
       sesionActual.grupo +
       "\n\n" +
-      "Los alumnos pendientes serán marcados como FALTA."
+      "Los alumnos pendientes serán marcados como FALTA.\n\n" +
+      "La clase seguirá abierta y podrás continuar escaneando a quienes lleguen tarde."
     );
 
   if (!aceptar) {
     return;
   }
+
+  const btn =
+    document.getElementById("btnCerrarPase");
+
+  btn.disabled = true;
+  btn.textContent = "⏳ Cerrando pase...";
+
+  try {
+
+    const datos =
+      await llamarScript({
+        accion: "cerrarPase",
+        idSesion: sesionActual.idSesion
+      });
+
+    if (!datos.ok) {
+
+      alert(datos.mensaje);
+      return;
+    }
+
+    sesionActual.estado =
+      "PASE CERRADO";
+
+    await actualizarResumen();
+
+    actualizarInterfazSesion();
+
+    alert(
+      datos.mensaje +
+      "\n\nFaltas registradas: " +
+      (datos.faltasAgregadas || 0) +
+      "\n\nPuedes seguir escaneando alumnos que lleguen tarde."
+    );
+
+  } catch (error) {
+
+    alert("No fue posible cerrar el pase de lista.");
+
+  } finally {
+
+    btn.disabled = false;
+    btn.textContent = "✅ Cerrar pase de lista";
+  }
+}
+
+
+// =====================================================
+// FINALIZAR CLASE
+// =====================================================
+
+async function confirmarFinalizarClase() {
+
+  if (!sesionActual) {
+
+    alert("No hay una sesión abierta.");
+    return;
+  }
+
+  let mensaje =
+    "¿Finalizar definitivamente la clase?\n\n" +
+    sesionActual.materia +
+    "\nGrupo " +
+    sesionActual.grupo;
+
+  if (sesionActual.estado === "ACTIVA") {
+
+    mensaje +=
+      "\n\n⚠️ Todavía no has cerrado el pase de lista." +
+      "\nLos alumnos pendientes serán marcados como FALTA y la clase quedará finalizada.";
+  } else {
+
+    mensaje +=
+      "\n\nDespués de finalizar ya no podrás registrar más QR en esta sesión.";
+  }
+
+  const aceptar =
+    confirm(mensaje);
+
+  if (!aceptar) {
+    return;
+  }
+
+  const btn =
+    document.getElementById("btnFinalizar");
+
+  btn.disabled = true;
+  btn.textContent = "⏳ Finalizando...";
 
   try {
 
@@ -1166,9 +1358,10 @@ async function confirmarFinalizar() {
     }
 
     alert(
-      datos.mensaje +
-      "\n\nFaltas registradas: " +
-      (datos.faltasAgregadas || 0)
+      "✅ CLASE FINALIZADA\n\n" +
+      sesionActual.materia +
+      "\nGrupo " +
+      sesionActual.grupo
     );
 
     sesionActual = null;
@@ -1179,7 +1372,12 @@ async function confirmarFinalizar() {
 
   } catch (error) {
 
-    alert("No fue posible finalizar el pase de lista.");
+    alert("No fue posible finalizar la clase.");
+
+  } finally {
+
+    btn.disabled = false;
+    btn.textContent = "⏹️ Finalizar clase";
   }
 }
 

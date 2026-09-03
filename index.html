@@ -153,45 +153,45 @@ function mostrarResultado(datos) {
   resultado.innerHTML = html;
 }
 
-function registrar(matricula) {
+async function registrar(matricula) {
 
   const grupo = document.getElementById("grupo").value;
 
-  const callback = "respuesta_" + Date.now();
+  const url =
+    URL_SCRIPT +
+    "?accion=registrar" +
+    "&matricula=" + encodeURIComponent(matricula) +
+    "&grupo=" + encodeURIComponent(grupo);
 
-  const script = document.createElement("script");
+  try {
 
-  window[callback] = function(datos) {
+    const respuesta = await fetch(url, {
+      method: "GET",
+      redirect: "follow"
+    });
+
+    const texto = await respuesta.text();
+
+    const datos = JSON.parse(texto);
 
     mostrarResultado(datos);
 
-    delete window[callback];
-
-    script.remove();
-
-    setTimeout(function() {
-      procesando = false;
-    }, 1200);
-  };
-
-  script.onerror = function() {
+  } catch (error) {
 
     mostrarResultado({
       ok: false,
       mensaje: "No se pudo conectar con Google Sheets."
     });
 
-    procesando = false;
-  };
+    console.error(error);
 
-  script.src =
-    URL_SCRIPT +
-    "?accion=registrar" +
-    "&matricula=" + encodeURIComponent(matricula) +
-    "&grupo=" + encodeURIComponent(grupo) +
-    "&callback=" + callback;
+  } finally {
 
-  document.body.appendChild(script);
+    setTimeout(function() {
+      procesando = false;
+    }, 1200);
+
+  }
 }
 
 function onScanSuccess(decodedText) {

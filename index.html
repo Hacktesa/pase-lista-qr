@@ -2,22 +2,14 @@
 <html lang="es">
 
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0">
-
-<title>
-Pase de Lista QR - Mtra. Monsait Cruz
-</title>
+<title>Pase de Lista QR - Mtra. Monsait Cruz</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
-
 <style>
-
 body {
   margin: 0;
   padding: 14px;
@@ -90,6 +82,11 @@ label {
   color: #12652a;
 }
 
+.retardo {
+  background: #fff1bd;
+  color: #715400;
+}
+
 .duplicado {
   background: #fff1bd;
   color: #715400;
@@ -117,25 +114,25 @@ label {
 }
 
 .contadores {
-  display: flex;
-  gap: 7px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 5px;
   margin-top: 10px;
 }
 
 .contador {
-  flex: 1;
-  padding: 11px 3px;
+  padding: 10px 2px;
   background: #edf2f6;
   border-radius: 10px;
 }
 
 .numero {
-  font-size: 23px;
+  font-size: 21px;
   font-weight: bold;
 }
 
 .etiqueta {
-  font-size: 11px;
+  font-size: 9px;
 }
 
 button {
@@ -151,6 +148,11 @@ button {
   color: white;
 }
 
+.botonVerde {
+  background: #19733d;
+  color: white;
+}
+
 .botonRojo {
   background: #b4202a;
   color: white;
@@ -160,14 +162,23 @@ button {
   background: #e0e5e9;
 }
 
+.botonGrande {
+  width: 100%;
+  margin-top: 8px;
+  font-size: 17px;
+  font-weight: bold;
+}
+
 .botones {
   display: flex;
   gap: 7px;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .botones button {
   flex: 1;
+  min-width: 90px;
 }
 
 .lista {
@@ -185,153 +196,118 @@ button {
 .estadoClase {
   background: #e8f0f8;
   border-radius: 10px;
-  padding: 10px;
+  padding: 12px;
   margin-top: 5px;
   font-size: 14px;
 }
 
+.sesionActiva {
+  background: #dff4e3;
+  color: #12652a;
+  border: 1px solid #94c9a1;
+}
+
+.sesionInactiva {
+  background: #f5f5f5;
+  color: #555;
+}
+
+.aviso {
+  font-size: 13px;
+  margin-top: 8px;
+}
 </style>
-
 </head>
-
 
 <body>
 
 <div class="contenedor">
 
-
 <div class="encabezado">
-
-<h1>
-📷 Pase de Lista QR
-</h1>
-
-<p>
-COBACH Plantel 234
-</p>
-
-<p>
-Mtra. Monsait Cruz
-</p>
-
+  <h1>📷 Pase de Lista QR</h1>
+  <p>COBACH Plantel 234</p>
+  <p>Mtra. Monsait Cruz</p>
 </div>
-
 
 <div class="tarjeta">
 
-<label>
-Materia
-</label>
+<label>Materia</label>
 
-<select
-  id="materia"
-  onchange="cambiarMateria()">
-
-<option value="">
-Cargando materias...
-</option>
-
+<select id="materia" onchange="cambiarMateria()">
+  <option value="">Cargando materias...</option>
 </select>
 
+<label>Grupo</label>
 
-<label>
-Grupo
-</label>
-
-<select
-  id="grupo"
-  onchange="cambiarGrupo()">
-
-<option value="">
-Selecciona primero una materia
-</option>
-
+<select id="grupo" onchange="cambiarGrupo()">
+  <option value="">Selecciona primero una materia</option>
 </select>
 
+<label>Minutos para considerar retardo</label>
 
-<div
-  id="estadoClase"
-  class="estadoClase">
+<input
+  id="minutosRetardo"
+  type="number"
+  value="10"
+  min="0"
+  step="1">
 
-Selecciona la materia y el grupo.
-
+<div id="estadoClase" class="estadoClase sesionInactiva">
+  Selecciona la materia y el grupo.
 </div>
 
+<button
+  id="btnIniciar"
+  class="botonVerde botonGrande"
+  onclick="iniciarClase()">
+  ▶️ Iniciar clase
+</button>
+
+<button
+  id="btnFinalizar"
+  class="botonRojo botonGrande"
+  onclick="confirmarFinalizar()"
+  style="display:none;">
+  ⏹️ Finalizar pase de lista
+</button>
 
 <div class="contadores">
 
-<div class="contador">
+  <div class="contador">
+    <div class="numero" id="presentes">0</div>
+    <div class="etiqueta">PRESENTES</div>
+  </div>
 
-<div
-  class="numero"
-  id="presentes">
-0
-</div>
+  <div class="contador">
+    <div class="numero" id="retardos">0</div>
+    <div class="etiqueta">RETARDOS</div>
+  </div>
 
-<div class="etiqueta">
-PRESENTES
-</div>
+  <div class="contador">
+    <div class="numero" id="pendientes">0</div>
+    <div class="etiqueta">PENDIENTES</div>
+  </div>
 
-</div>
+  <div class="contador">
+    <div class="numero" id="faltas">0</div>
+    <div class="etiqueta">FALTAS</div>
+  </div>
 
-
-<div class="contador">
-
-<div
-  class="numero"
-  id="pendientes">
-0
-</div>
-
-<div class="etiqueta">
-PENDIENTES
-</div>
-
-</div>
-
-
-<div class="contador">
-
-<div
-  class="numero"
-  id="faltas">
-0
-</div>
-
-<div class="etiqueta">
-FALTAS
-</div>
-
-</div>
-
-
-<div class="contador">
-
-<div
-  class="numero"
-  id="total">
-0
-</div>
-
-<div class="etiqueta">
-TOTAL
-</div>
+  <div class="contador">
+    <div class="numero" id="total">0</div>
+    <div class="etiqueta">TOTAL</div>
+  </div>
 
 </div>
 
 </div>
-
-</div>
-
 
 <div class="tarjeta">
 
-<h3>
-📷 Escanear QR
-</h3>
+<h3>📷 Escanear QR</h3>
 
-<p>
-Selecciona primero la materia y el grupo.
+<p id="textoEscaner">
+Inicia una clase antes de escanear.
 </p>
 
 <div id="reader"></div>
@@ -340,12 +316,9 @@ Selecciona primero la materia y el grupo.
 
 </div>
 
-
 <div class="tarjeta">
 
-<h3>
-✏️ Registro manual
-</h3>
+<h3>✏️ Registro manual</h3>
 
 <input
   id="matriculaManual"
@@ -355,105 +328,59 @@ Selecciona primero la materia y el grupo.
 <button
   class="botonAzul"
   onclick="registroManual()">
-
-Registrar asistencia
-
+  Registrar asistencia
 </button>
 
 </div>
 
-
 <div class="tarjeta">
 
-<h3>
-📋 Asistencia de hoy
-</h3>
-
+<h3>📋 Asistencia de la sesión</h3>
 
 <div class="botones">
 
-<button
-  class="botonGris"
-  onclick="mostrarPresentes()">
-
-✅ Presentes
-
+<button class="botonGris" onclick="mostrarPresentes()">
+  ✅ Presentes
 </button>
 
-
-<button
-  class="botonGris"
-  onclick="mostrarPendientes()">
-
-○ Pendientes
-
+<button class="botonGris" onclick="mostrarRetardos()">
+  🟡 Retardos
 </button>
 
+<button class="botonGris" onclick="mostrarPendientes()">
+  ○ Pendientes
+</button>
 
-<button
-  class="botonGris"
-  onclick="mostrarFaltas()">
-
-❌ Faltas
-
+<button class="botonGris" onclick="mostrarFaltas()">
+  ❌ Faltas
 </button>
 
 </div>
 
-
-<div
-  id="listaAlumnos"
-  class="lista">
-
-Selecciona una clase.
-
+<div id="listaAlumnos" class="lista">
+  Inicia una clase.
 </div>
 
 </div>
 
-
-<div class="tarjeta">
-
-<button
-  class="botonRojo"
-  onclick="confirmarFinalizar()">
-
-Finalizar pase de lista
-
-</button>
-
-<p style="font-size:13px;">
-
-Al finalizar, los alumnos pendientes
-se registrarán como <strong>FALTA</strong>.
-
-</p>
-
 </div>
-
-
-</div>
-
 
 <script>
 
 const URL_SCRIPT =
 "https://script.google.com/macros/s/AKfycbyi9k4fsH2J-dDIS1WxLJQXmb3O1I2t-hp2mAyOJlcS0Szvgs7_b8UMn5aAglqfcMpnog/exec";
 
-
 let clases = {};
-
+let sesionActual = null;
 let resumenActual = null;
 
 let procesando = false;
-
 let ultimoCodigo = "";
-
 let ultimoTiempo = 0;
 
 
 // =====================================================
-// COMUNICACIÓN CON APPS SCRIPT
+// COMUNICACIÓN
 // =====================================================
 
 async function llamarScript(parametros) {
@@ -463,28 +390,21 @@ async function llamarScript(parametros) {
     "?" +
     new URLSearchParams(parametros).toString();
 
-
   const respuesta =
-    await fetch(
-      url,
-      {
-        method: "GET",
-        redirect: "follow",
-        cache: "no-store"
-      }
-    );
+    await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      cache: "no-store"
+    });
 
-
-  const texto =
-    await respuesta.text();
-
+  const texto = await respuesta.text();
 
   return JSON.parse(texto);
 }
 
 
 // =====================================================
-// CARGAR MATERIAS Y GRUPOS
+// CARGAR CLASES
 // =====================================================
 
 async function cargarClases() {
@@ -496,46 +416,33 @@ async function cargarClases() {
         accion: "clases"
       });
 
-
     if (!datos.ok) {
-
       alert(datos.mensaje);
-
       return;
     }
 
-
     clases = datos.clases;
-
 
     const materiaSelect =
       document.getElementById("materia");
 
-
     materiaSelect.innerHTML =
       '<option value="">Selecciona una materia</option>';
 
+    Object.keys(clases).forEach(function(materia) {
 
-    Object.keys(clases)
-      .forEach(function(materia) {
+      const opcion =
+        document.createElement("option");
 
-        const opcion =
-          document.createElement("option");
+      opcion.value = materia;
+      opcion.textContent = materia;
 
-        opcion.value = materia;
-        opcion.textContent = materia;
-
-        materiaSelect.appendChild(opcion);
-
-      });
-
+      materiaSelect.appendChild(opcion);
+    });
 
   } catch (error) {
 
-    alert(
-      "No se pudieron cargar las materias."
-    );
-
+    alert("No se pudieron cargar las materias.");
   }
 }
 
@@ -546,46 +453,38 @@ async function cargarClases() {
 
 function cambiarMateria() {
 
-  const materia =
-    document
-      .getElementById("materia")
-      .value;
+  sesionActual = null;
+  resumenActual = null;
 
+  const materia =
+    document.getElementById("materia").value;
 
   const grupoSelect =
     document.getElementById("grupo");
 
-
   grupoSelect.innerHTML =
     '<option value="">Selecciona un grupo</option>';
 
-
-  if (
-    !materia ||
-    !clases[materia]
-  ) {
+  if (!materia || !clases[materia]) {
 
     limpiarResumen();
-
+    actualizarInterfazSesion();
     return;
   }
 
+  clases[materia].forEach(function(grupo) {
 
-  clases[materia]
-    .forEach(function(grupo) {
+    const opcion =
+      document.createElement("option");
 
-      const opcion =
-        document.createElement("option");
+    opcion.value = grupo;
+    opcion.textContent = grupo;
 
-      opcion.value = grupo;
-      opcion.textContent = grupo;
-
-      grupoSelect.appendChild(opcion);
-
-    });
-
+    grupoSelect.appendChild(opcion);
+  });
 
   limpiarResumen();
+  actualizarInterfazSesion();
 }
 
 
@@ -593,7 +492,10 @@ function cambiarMateria() {
 // CAMBIO DE GRUPO
 // =====================================================
 
-function cambiarGrupo() {
+async function cambiarGrupo() {
+
+  sesionActual = null;
+  resumenActual = null;
 
   const materia =
     document.getElementById("materia").value;
@@ -601,52 +503,229 @@ function cambiarGrupo() {
   const grupo =
     document.getElementById("grupo").value;
 
+  limpiarResumen();
 
-  if (materia && grupo) {
+  if (!materia || !grupo) {
+    actualizarInterfazSesion();
+    return;
+  }
 
-    document
-      .getElementById("estadoClase")
-      .innerHTML =
-        "<strong>" +
-        escapar(materia) +
-        "</strong><br>" +
-        escapar(grupo);
+  await buscarSesionActiva();
+}
 
 
-    actualizarResumen();
+// =====================================================
+// BUSCAR SESIÓN ACTIVA
+// =====================================================
 
-  } else {
+async function buscarSesionActiva() {
 
-    limpiarResumen();
+  const materia =
+    document.getElementById("materia").value;
 
+  const grupo =
+    document.getElementById("grupo").value;
+
+  if (!materia || !grupo) {
+    return;
+  }
+
+  try {
+
+    const datos =
+      await llamarScript({
+        accion: "sesionActiva",
+        materia: materia,
+        grupo: grupo
+      });
+
+    if (
+      datos.ok &&
+      datos.activa &&
+      datos.sesion
+    ) {
+
+      sesionActual = datos.sesion;
+
+      await actualizarResumen();
+
+    } else {
+
+      sesionActual = null;
+      limpiarResumen();
+    }
+
+    actualizarInterfazSesion();
+
+  } catch (error) {
+
+    sesionActual = null;
+    actualizarInterfazSesion();
   }
 }
 
 
 // =====================================================
-// OBTENER CLASE ACTUAL
+// INICIAR CLASE
 // =====================================================
 
-function claseActual() {
+async function iniciarClase() {
 
-  return {
+  const materia =
+    document.getElementById("materia").value;
 
-    materia:
-      document
-        .getElementById("materia")
-        .value,
+  const grupo =
+    document.getElementById("grupo").value;
 
-    grupo:
-      document
-        .getElementById("grupo")
-        .value
+  const minutos =
+    document.getElementById("minutosRetardo").value || "10";
 
-  };
+  if (!materia || !grupo) {
+
+    alert("Selecciona primero la materia y el grupo.");
+    return;
+  }
+
+  const aceptar =
+    confirm(
+      "¿Iniciar esta clase?\n\n" +
+      materia +
+      "\nGrupo " +
+      grupo +
+      "\n\n" +
+      "Retardo después de " +
+      minutos +
+      " minutos."
+    );
+
+  if (!aceptar) {
+    return;
+  }
+
+  try {
+
+    const datos =
+      await llamarScript({
+        accion: "iniciar",
+        materia: materia,
+        grupo: grupo,
+        minutosRetardo: minutos
+      });
+
+    if (datos.ok && datos.sesion) {
+
+      sesionActual = datos.sesion;
+
+      mostrarResultado({
+        ok: true,
+        mensaje: "✅ CLASE INICIADA",
+        materia: materia,
+        grupo: grupo,
+        hora: datos.sesion.horaInicio
+      });
+
+    } else if (
+      datos.yaExiste &&
+      datos.sesion
+    ) {
+
+      sesionActual = datos.sesion;
+
+      alert(
+        "Ya había una sesión activa para esta clase. Se continuará con esa sesión."
+      );
+
+    } else {
+
+      alert(datos.mensaje || "No fue posible iniciar la clase.");
+      return;
+    }
+
+    await actualizarResumen();
+    actualizarInterfazSesion();
+
+  } catch (error) {
+
+    alert("No fue posible iniciar la clase.");
+  }
 }
 
 
 // =====================================================
-// MOSTRAR RESULTADO
+// INTERFAZ DE SESIÓN
+// =====================================================
+
+function actualizarInterfazSesion() {
+
+  const estado =
+    document.getElementById("estadoClase");
+
+  const btnIniciar =
+    document.getElementById("btnIniciar");
+
+  const btnFinalizar =
+    document.getElementById("btnFinalizar");
+
+  const textoEscaner =
+    document.getElementById("textoEscaner");
+
+  const materia =
+    document.getElementById("materia").value;
+
+  const grupo =
+    document.getElementById("grupo").value;
+
+  if (sesionActual) {
+
+    estado.className =
+      "estadoClase sesionActiva";
+
+    estado.innerHTML =
+      "<strong>🟢 SESIÓN ACTIVA</strong><br>" +
+      escapar(sesionActual.materia) +
+      "<br>Grupo " +
+      escapar(sesionActual.grupo) +
+      "<br>Retardo después de " +
+      escapar(sesionActual.minutosRetardo) +
+      " minutos";
+
+    btnIniciar.style.display = "none";
+    btnFinalizar.style.display = "block";
+
+    textoEscaner.innerHTML =
+      "<strong>Escáner listo.</strong><br>" +
+      "Los QR se registrarán en esta sesión.";
+
+  } else {
+
+    estado.className =
+      "estadoClase sesionInactiva";
+
+    if (materia && grupo) {
+
+      estado.innerHTML =
+        "<strong>Sin sesión activa</strong><br>" +
+        escapar(materia) +
+        "<br>Grupo " +
+        escapar(grupo);
+
+    } else {
+
+      estado.innerHTML =
+        "Selecciona la materia y el grupo.";
+    }
+
+    btnIniciar.style.display = "block";
+    btnFinalizar.style.display = "none";
+
+    textoEscaner.innerHTML =
+      "Inicia una clase antes de escanear.";
+  }
+}
+
+
+// =====================================================
+// RESULTADO
 // =====================================================
 
 function mostrarResultado(datos) {
@@ -654,13 +733,22 @@ function mostrarResultado(datos) {
   const caja =
     document.getElementById("resultado");
 
-
   caja.style.display = "block";
-
 
   if (datos.grupoIncorrecto) {
 
     caja.className = "otrogrupo";
+
+  } else if (
+    datos.ok &&
+    datos.estado === "RETARDO"
+  ) {
+
+    caja.className = "retardo";
+
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 70, 100]);
+    }
 
   } else if (datos.ok) {
 
@@ -675,20 +763,15 @@ function mostrarResultado(datos) {
     caja.className = "duplicado";
 
     if (navigator.vibrate) {
-      navigator.vibrate(
-        [100,100,100]
-      );
+      navigator.vibrate([100,100,100]);
     }
 
   } else {
 
     caja.className = "error";
-
   }
 
-
   let html = "";
-
 
   if (datos.nombre) {
 
@@ -696,9 +779,7 @@ function mostrarResultado(datos) {
       '<div class="nombre">' +
       escapar(datos.nombre) +
       '</div>';
-
   }
-
 
   if (datos.grupoIncorrecto) {
 
@@ -714,18 +795,13 @@ function mostrarResultado(datos) {
       escapar(datos.grupoSeleccionado) +
       '</strong></div>';
 
-  } else {
+  } else if (datos.grupo) {
 
-    if (datos.grupo) {
-
-      html +=
-        '<div class="dato">' +
-        'Grupo: ' +
-        escapar(datos.grupo) +
-        '</div>';
-    }
+    html +=
+      '<div class="dato">Grupo: ' +
+      escapar(datos.grupo) +
+      '</div>';
   }
-
 
   if (datos.materia) {
 
@@ -733,26 +809,28 @@ function mostrarResultado(datos) {
       '<div class="dato">' +
       escapar(datos.materia) +
       '</div>';
-
   }
 
+  if (datos.estado) {
+
+    html +=
+      '<div class="dato">Estado: <strong>' +
+      escapar(datos.estado) +
+      '</strong></div>';
+  }
 
   if (datos.hora) {
 
     html +=
-      '<div class="dato">' +
-      'Hora: ' +
+      '<div class="dato">Hora: ' +
       escapar(datos.hora) +
       '</div>';
-
   }
-
 
   html +=
     '<div class="dato"><strong>' +
     escapar(datos.mensaje || "") +
     '</strong></div>';
-
 
   caja.innerHTML = html;
 }
@@ -764,69 +842,42 @@ function mostrarResultado(datos) {
 
 async function registrar(matricula) {
 
-  const clase =
-    claseActual();
-
-
-  if (
-    !clase.materia ||
-    !clase.grupo
-  ) {
+  if (!sesionActual) {
 
     mostrarResultado({
       ok: false,
-      mensaje:
-        "Selecciona primero la materia y el grupo."
+      mensaje: "Primero debes iniciar la clase."
     });
 
     procesando = false;
-
     return;
   }
-
 
   try {
 
     const datos =
       await llamarScript({
-
-        accion:
-          "registrar",
-
-        matricula:
-          matricula,
-
-        materia:
-          clase.materia,
-
-        grupo:
-          clase.grupo
-
+        accion: "registrar",
+        matricula: matricula,
+        idSesion: sesionActual.idSesion
       });
-
 
     mostrarResultado(datos);
 
-
     await actualizarResumen();
-
 
   } catch (error) {
 
     mostrarResultado({
       ok: false,
-      mensaje:
-        "No se pudo conectar con Google Sheets."
+      mensaje: "No se pudo conectar con Google Sheets."
     });
 
   } finally {
 
     setTimeout(function() {
-
       procesando = false;
-
     }, 1400);
-
   }
 }
 
@@ -837,9 +888,7 @@ async function registrar(matricula) {
 
 function onScanSuccess(decodedText) {
 
-  const ahora =
-    Date.now();
-
+  const ahora = Date.now();
 
   if (
     procesando ||
@@ -848,31 +897,17 @@ function onScanSuccess(decodedText) {
       ahora - ultimoTiempo < 4000
     )
   ) {
-
     return;
-
   }
 
-
   procesando = true;
+  ultimoCodigo = decodedText.trim();
+  ultimoTiempo = ahora;
 
-  ultimoCodigo =
-    decodedText.trim();
-
-  ultimoTiempo =
-    ahora;
-
-
-  registrar(
-    decodedText.trim()
-  );
+  registrar(decodedText.trim());
 }
 
-
 function onScanFailure(error) {
-
-  // La cámara continúa buscando QR.
-
 }
 
 
@@ -882,26 +917,17 @@ function onScanFailure(error) {
 
 const scanner =
   new Html5QrcodeScanner(
-
     "reader",
-
     {
-
       fps: 10,
-
       qrbox: {
         width: 240,
         height: 240
       },
-
-      rememberLastUsedCamera:
-        true
-
+      rememberLastUsedCamera: true
     },
-
     false
   );
-
 
 scanner.render(
   onScanSuccess,
@@ -916,33 +942,28 @@ scanner.render(
 function registroManual() {
 
   const campo =
-    document
-      .getElementById(
-        "matriculaManual"
-      );
-
+    document.getElementById("matriculaManual");
 
   const matricula =
     campo.value.trim();
 
-
   if (!matricula) {
 
-    alert(
-      "Escribe la matrícula del alumno."
-    );
-
+    alert("Escribe la matrícula del alumno.");
     return;
   }
 
+  if (!sesionActual) {
+
+    alert("Primero debes iniciar la clase.");
+    return;
+  }
 
   if (procesando) {
     return;
   }
 
-
   procesando = true;
-
   campo.value = "";
 
   registrar(matricula);
@@ -955,118 +976,68 @@ function registroManual() {
 
 async function actualizarResumen() {
 
-  const clase =
-    claseActual();
-
-
-  if (
-    !clase.materia ||
-    !clase.grupo
-  ) {
+  if (!sesionActual) {
 
     limpiarResumen();
-
     return;
   }
-
 
   try {
 
     const datos =
       await llamarScript({
-
-        accion:
-          "resumen",
-
-        materia:
-          clase.materia,
-
-        grupo:
-          clase.grupo
-
+        accion: "resumen",
+        idSesion: sesionActual.idSesion
       });
 
-
     if (!datos.ok) {
-
       return;
     }
 
+    resumenActual = datos;
 
-    resumenActual =
-      datos;
+    document.getElementById("presentes").textContent =
+      datos.cantidadPresentes;
 
+    document.getElementById("retardos").textContent =
+      datos.cantidadRetardos;
 
-    document
-      .getElementById("presentes")
-      .textContent =
-        datos.cantidadPresentes;
+    document.getElementById("pendientes").textContent =
+      datos.cantidadPendientes;
 
+    document.getElementById("faltas").textContent =
+      datos.cantidadFaltas;
 
-    document
-      .getElementById("pendientes")
-      .textContent =
-        datos.cantidadPendientes;
-
-
-    document
-      .getElementById("faltas")
-      .textContent =
-        datos.cantidadFaltas;
-
-
-    document
-      .getElementById("total")
-      .textContent =
-        datos.total;
-
+    document.getElementById("total").textContent =
+      datos.total;
 
     mostrarPendientes();
-
 
   } catch (error) {
 
     console.error(error);
-
   }
 }
 
 
 // =====================================================
-// LIMPIAR RESUMEN
+// LIMPIAR
 // =====================================================
 
 function limpiarResumen() {
 
   resumenActual = null;
 
-  document
-    .getElementById("presentes")
-    .textContent = "0";
+  document.getElementById("presentes").textContent = "0";
+  document.getElementById("retardos").textContent = "0";
+  document.getElementById("pendientes").textContent = "0";
+  document.getElementById("faltas").textContent = "0";
+  document.getElementById("total").textContent = "0";
 
-  document
-    .getElementById("pendientes")
-    .textContent = "0";
-
-  document
-    .getElementById("faltas")
-    .textContent = "0";
-
-  document
-    .getElementById("total")
-    .textContent = "0";
-
-
-  document
-    .getElementById("listaAlumnos")
-    .innerHTML =
-      "Selecciona una clase.";
-
-
-  document
-    .getElementById("estadoClase")
-    .innerHTML =
-      "Selecciona la materia y el grupo.";
+  document.getElementById("listaAlumnos").innerHTML =
+    sesionActual
+      ? "Cargando..."
+      : "Inicia una clase.";
 }
 
 
@@ -1083,6 +1054,14 @@ function mostrarPresentes() {
   );
 }
 
+function mostrarRetardos() {
+
+  mostrarLista(
+    "retardos",
+    "🟡",
+    "No hay retardos registrados."
+  );
+}
 
 function mostrarPendientes() {
 
@@ -1093,7 +1072,6 @@ function mostrarPendientes() {
   );
 }
 
-
 function mostrarFaltas() {
 
   mostrarLista(
@@ -1103,7 +1081,6 @@ function mostrarFaltas() {
   );
 }
 
-
 function mostrarLista(
   tipo,
   icono,
@@ -1111,33 +1088,26 @@ function mostrarLista(
 ) {
 
   const lista =
-    document
-      .getElementById(
-        "listaAlumnos"
-      );
-
+    document.getElementById("listaAlumnos");
 
   if (!resumenActual) {
 
     lista.innerHTML =
-      "Selecciona una clase.";
+      sesionActual
+        ? "Cargando..."
+        : "Inicia una clase.";
 
     return;
   }
-
 
   const alumnos =
     resumenActual[tipo] || [];
 
-
   if (alumnos.length === 0) {
 
-    lista.innerHTML =
-      mensajeVacio;
-
+    lista.innerHTML = mensajeVacio;
     return;
   }
-
 
   lista.innerHTML =
     alumnos
@@ -1150,7 +1120,6 @@ function mostrarLista(
           escapar(alumno.nombre) +
           '</div>'
         );
-
       })
       .join("");
 }
@@ -1162,55 +1131,39 @@ function mostrarLista(
 
 async function confirmarFinalizar() {
 
-  const clase =
-    claseActual();
+  if (!sesionActual) {
 
-
-  if (
-    !clase.materia ||
-    !clase.grupo
-  ) {
-
-    alert(
-      "Selecciona primero la materia y el grupo."
-    );
-
+    alert("No hay una sesión activa.");
     return;
   }
-
 
   const aceptar =
     confirm(
       "¿Finalizar el pase de lista?\n\n" +
-      clase.materia +
+      sesionActual.materia +
       "\nGrupo " +
-      clase.grupo +
+      sesionActual.grupo +
       "\n\n" +
       "Los alumnos pendientes serán marcados como FALTA."
     );
-
 
   if (!aceptar) {
     return;
   }
 
-
   try {
 
     const datos =
       await llamarScript({
-
-        accion:
-          "finalizar",
-
-        materia:
-          clase.materia,
-
-        grupo:
-          clase.grupo
-
+        accion: "finalizar",
+        idSesion: sesionActual.idSesion
       });
 
+    if (!datos.ok) {
+
+      alert(datos.mensaje);
+      return;
+    }
 
     alert(
       datos.mensaje +
@@ -1218,16 +1171,15 @@ async function confirmarFinalizar() {
       (datos.faltasAgregadas || 0)
     );
 
+    sesionActual = null;
+    resumenActual = null;
 
-    await actualizarResumen();
-
+    limpiarResumen();
+    actualizarInterfazSesion();
 
   } catch (error) {
 
-    alert(
-      "No fue posible finalizar el pase de lista."
-    );
-
+    alert("No fue posible finalizar el pase de lista.");
   }
 }
 
@@ -1253,9 +1205,9 @@ function escapar(texto) {
 // =====================================================
 
 cargarClases();
+actualizarInterfazSesion();
 
 </script>
 
 </body>
-
 </html>

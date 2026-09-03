@@ -2,185 +2,564 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Pase de Lista QR - COBACH 234</title>
+<meta charset="UTF-8">
 
-  <script src="https://unpkg.com/html5-qrcode"></script>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #eef2f5;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
+<title>
+Pase de Lista QR - COBACH 234
+</title>
 
-    .contenedor {
-      max-width: 500px;
-      margin: auto;
-      background: white;
-      border-radius: 18px;
-      padding: 22px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
+<script src="https://unpkg.com/html5-qrcode"></script>
 
-    h1 {
-      margin-top: 0;
-      font-size: 26px;
-    }
 
-    h2 {
-      margin-bottom: 15px;
-      font-size: 20px;
-    }
+<style>
 
-    select {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 18px;
-      font-size: 18px;
-      border-radius: 10px;
-      border: 1px solid #bbb;
-    }
+body {
+  margin: 0;
+  padding: 15px;
+  background: #f1f4f8;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
 
-    #reader {
-      width: 100%;
-      margin-top: 10px;
-    }
+.contenedor {
+  max-width: 520px;
+  margin: auto;
+}
 
-    #resultado {
-      display: none;
-      margin-top: 20px;
-      padding: 18px;
-      border-radius: 12px;
-    }
+.encabezado {
+  background: #123a63;
+  color: white;
+  padding: 20px;
+  border-radius: 18px;
+  margin-bottom: 15px;
+}
 
-    .exito {
-      background: #dff5e3;
-      color: #176b2c;
-    }
+.encabezado h1 {
+  margin: 0;
+  font-size: 25px;
+}
 
-    .duplicado {
-      background: #fff0c2;
-      color: #795900;
-    }
+.encabezado p {
+  margin: 6px 0 0;
+}
 
-    .error {
-      background: #ffe0e0;
-      color: #9a0000;
-    }
+.tarjeta {
+  background: white;
+  padding: 18px;
+  border-radius: 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 12px rgba(0,0,0,.12);
+}
 
-    .nombre {
-      font-size: 21px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+select,
+input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px;
+  font-size: 17px;
+  border-radius: 10px;
+  border: 1px solid #bbb;
+  margin-bottom: 10px;
+}
 
-    .dato {
-      margin-top: 5px;
-      font-size: 16px;
-    }
-  </style>
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.boton-azul {
+  background: #174f7c;
+  color: white;
+}
+
+.boton-rojo {
+  background: #b4202a;
+  color: white;
+}
+
+.boton-gris {
+  background: #e2e6ea;
+}
+
+#reader {
+  width: 100%;
+}
+
+#resultado {
+  display: none;
+  padding: 17px;
+  border-radius: 14px;
+  margin-top: 15px;
+}
+
+.exito {
+  background: #dff4e3;
+  color: #12652a;
+}
+
+.duplicado {
+  background: #fff2c8;
+  color: #735500;
+}
+
+.error {
+  background: #ffe1e1;
+  color: #990000;
+}
+
+.nombre {
+  font-size: 21px;
+  font-weight: bold;
+}
+
+.dato {
+  margin-top: 6px;
+}
+
+.contadores {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.contador {
+  flex: 1;
+  padding: 12px 5px;
+  border-radius: 10px;
+  background: #eef3f7;
+}
+
+.numero {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.etiqueta {
+  font-size: 12px;
+}
+
+.lista {
+  text-align: left;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 12px;
+}
+
+.alumno {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.oculto {
+  display: none;
+}
+
+.botones {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.botones button {
+  flex: 1;
+}
+
+</style>
+
 </head>
+
 
 <body>
 
 <div class="contenedor">
 
-  <h1>📷 Pase de Lista QR</h1>
-  <h2>Taller de Robótica - COBACH 234</h2>
 
-  <select id="grupo">
-    <option value="5°A">5°A</option>
-    <option value="5°B">5°B</option>
-    <option value="5°C">5°C</option>
-    <option value="5°D">5°D</option>
-  </select>
+<div class="encabezado">
 
-  <div id="reader"></div>
+<h1>📷 Pase de Lista QR</h1>
 
-  <div id="resultado"></div>
+<p>
+COBACH 234
+</p>
+
+<p>
+Taller de Robótica
+</p>
 
 </div>
 
+
+<div class="tarjeta">
+
+<strong>
+Grupo para consultar:
+</strong>
+
+<br><br>
+
+<select
+  id="grupoConsulta"
+  onchange="actualizarResumen()">
+
+<option value="5°A">
+5°A
+</option>
+
+<option value="5°B">
+5°B
+</option>
+
+<option value="5°C">
+5°C
+</option>
+
+<option value="5°D">
+5°D
+</option>
+
+</select>
+
+
+<div class="contadores">
+
+<div class="contador">
+<div
+  class="numero"
+  id="presentes">
+0
+</div>
+
+<div class="etiqueta">
+PRESENTES
+</div>
+</div>
+
+
+<div class="contador">
+<div
+  class="numero"
+  id="pendientes">
+0
+</div>
+
+<div class="etiqueta">
+PENDIENTES
+</div>
+</div>
+
+
+<div class="contador">
+<div
+  class="numero"
+  id="total">
+0
+</div>
+
+<div class="etiqueta">
+TOTAL
+</div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="tarjeta">
+
+<h3>
+Escanear QR
+</h3>
+
+<p>
+El grupo se detecta automáticamente.
+</p>
+
+<div id="reader"></div>
+
+<div id="resultado"></div>
+
+</div>
+
+
+<div class="tarjeta">
+
+<h3>
+Registro manual
+</h3>
+
+<input
+  id="matriculaManual"
+  type="text"
+  placeholder="Escribe la matrícula">
+
+<button
+  class="boton-azul"
+  onclick="registroManual()">
+
+Registrar matrícula
+
+</button>
+
+</div>
+
+
+<div class="tarjeta">
+
+<h3>
+Asistencia de hoy
+</h3>
+
+
+<div class="botones">
+
+<button
+  class="boton-gris"
+  onclick="mostrarPresentes()">
+
+Presentes
+
+</button>
+
+<button
+  class="boton-gris"
+  onclick="mostrarPendientes()">
+
+Pendientes
+
+</button>
+
+</div>
+
+
+<div
+  id="listaAlumnos"
+  class="lista">
+
+</div>
+
+</div>
+
+
+<div class="tarjeta">
+
+<button
+  class="boton-rojo"
+  onclick="confirmarFinalizar()">
+
+Finalizar pase de lista
+
+</button>
+
+<p style="font-size:13px;">
+
+Los alumnos pendientes se marcarán como
+<strong>FALTA</strong>.
+
+</p>
+
+</div>
+
+
+</div>
+
+
 <script>
 
-const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyi9k4fsH2J-dDIS1WxLJQXmb3O1I2t-hp2mAyOJlcS0Szvgs7_b8UMn5aAglqfcMpnog/exec";
+const URL_SCRIPT =
+"https://script.google.com/macros/s/AKfycbyi9k4fsH2J-dDIS1WxLJQXmb3O1I2t-hp2mAyOJlcS0Szvgs7_b8UMn5aAglqfcMpnog/exec";
+
 
 let procesando = false;
+
 let ultimoCodigo = "";
+
 let ultimoTiempo = 0;
+
+let resumenActual = null;
+
+
+// ------------------------------------------
+// MOSTRAR MENSAJE
+// ------------------------------------------
 
 function mostrarResultado(datos) {
 
-  const resultado = document.getElementById("resultado");
+  const caja =
+    document.getElementById("resultado");
 
-  resultado.style.display = "block";
+  caja.style.display = "block";
+
 
   if (datos.ok) {
-    resultado.className = "exito";
+
+    caja.className = "exito";
+
+    if (navigator.vibrate) {
+      navigator.vibrate(150);
+    }
+
   } else if (datos.duplicado) {
-    resultado.className = "duplicado";
+
+    caja.className = "duplicado";
+
+    if (navigator.vibrate) {
+      navigator.vibrate([100,100,100]);
+    }
+
   } else {
-    resultado.className = "error";
+
+    caja.className = "error";
+
   }
 
-  let html = "";
+
+  let contenido = "";
+
 
   if (datos.nombre) {
-    html += '<div class="nombre">' + datos.nombre + '</div>';
+
+    contenido +=
+      '<div class="nombre">' +
+      escapar(datos.nombre) +
+      '</div>';
+
   }
 
-  if (datos.matricula) {
-    html += '<div class="dato">Matrícula: ' + datos.matricula + '</div>';
-  }
 
   if (datos.grupo) {
-    html += '<div class="dato">Grupo: ' + datos.grupo + '</div>';
+
+    contenido +=
+      '<div class="dato">' +
+      'Grupo: ' +
+      escapar(datos.grupo) +
+      '</div>';
+
   }
+
+
+  if (datos.matricula) {
+
+    contenido +=
+      '<div class="dato">' +
+      'Matrícula: ' +
+      escapar(datos.matricula) +
+      '</div>';
+
+  }
+
 
   if (datos.hora) {
-    html += '<div class="dato">Hora: ' + datos.hora + '</div>';
+
+    contenido +=
+      '<div class="dato">' +
+      'Hora: ' +
+      escapar(datos.hora) +
+      '</div>';
+
   }
 
-  html += '<div class="dato"><strong>' +
-          (datos.mensaje || "Respuesta recibida") +
-          '</strong></div>';
 
-  resultado.innerHTML = html;
+  contenido +=
+    '<div class="dato"><strong>' +
+    escapar(datos.mensaje || "") +
+    '</strong></div>';
+
+
+  caja.innerHTML = contenido;
 }
 
-async function registrar(matricula) {
 
-  const grupo = document.getElementById("grupo").value;
+// ------------------------------------------
+// SEGURIDAD PARA TEXTO
+// ------------------------------------------
+
+function escapar(texto) {
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    String(texto || "");
+
+  return div.innerHTML;
+}
+
+
+// ------------------------------------------
+// LLAMAR APPS SCRIPT
+// ------------------------------------------
+
+async function llamarScript(parametros) {
 
   const url =
     URL_SCRIPT +
-    "?accion=registrar" +
-    "&matricula=" + encodeURIComponent(matricula) +
-    "&grupo=" + encodeURIComponent(grupo);
+    "?" +
+    new URLSearchParams(parametros).toString();
+
+  const respuesta =
+    await fetch(
+      url,
+      {
+        method: "GET",
+        redirect: "follow",
+        cache: "no-store"
+      }
+    );
+
+  const texto =
+    await respuesta.text();
+
+  return JSON.parse(texto);
+}
+
+
+// ------------------------------------------
+// REGISTRAR QR
+// ------------------------------------------
+
+async function registrar(matricula) {
 
   try {
 
-    const respuesta = await fetch(url, {
-      method: "GET",
-      redirect: "follow"
-    });
+    const datos =
+      await llamarScript({
+        accion: "registrar",
+        matricula: matricula
+      });
 
-    const texto = await respuesta.text();
-
-    const datos = JSON.parse(texto);
 
     mostrarResultado(datos);
+
+
+    // Si detectó un grupo,
+    // mostramos automáticamente ese grupo.
+    if (datos.grupo) {
+
+      document
+        .getElementById("grupoConsulta")
+        .value = datos.grupo;
+
+    }
+
+
+    await actualizarResumen();
+
 
   } catch (error) {
 
     mostrarResultado({
       ok: false,
-      mensaje: "No se pudo conectar con Google Sheets."
+      mensaje:
+        "No se pudo conectar con Google Sheets."
     });
 
     console.error(error);
@@ -188,57 +567,353 @@ async function registrar(matricula) {
   } finally {
 
     setTimeout(function() {
+
       procesando = false;
-    }, 1200);
+
+    }, 1500);
 
   }
 }
 
+
+// ------------------------------------------
+// QR LEÍDO
+// ------------------------------------------
+
 function onScanSuccess(decodedText) {
 
-  const ahora = Date.now();
+  const ahora =
+    Date.now();
+
 
   if (
     procesando ||
     (
       decodedText === ultimoCodigo &&
-      ahora - ultimoTiempo < 3000
+      ahora - ultimoTiempo < 4000
     )
   ) {
+
     return;
+
   }
+
 
   procesando = true;
 
-  ultimoCodigo = decodedText;
-  ultimoTiempo = ahora;
+  ultimoCodigo =
+    decodedText.trim();
 
-  registrar(decodedText.trim());
+  ultimoTiempo =
+    ahora;
+
+
+  registrar(
+    decodedText.trim()
+  );
 }
+
 
 function onScanFailure(error) {
-  // No hacemos nada mientras la cámara busca un QR.
+
+  // La cámara continúa buscando.
 }
 
-const scanner = new Html5QrcodeScanner(
-  "reader",
-  {
-    fps: 10,
-    qrbox: {
-      width: 250,
-      height: 250
+
+// ------------------------------------------
+// CREAR ESCÁNER
+// ------------------------------------------
+
+const scanner =
+  new Html5QrcodeScanner(
+
+    "reader",
+
+    {
+
+      fps: 10,
+
+      qrbox: {
+        width: 240,
+        height: 240
+      },
+
+      rememberLastUsedCamera: true
+
     },
-    rememberLastUsedCamera: true
-  },
-  false
-);
+
+    false
+  );
+
 
 scanner.render(
   onScanSuccess,
   onScanFailure
 );
 
+
+// ------------------------------------------
+// REGISTRO MANUAL
+// ------------------------------------------
+
+function registroManual() {
+
+  const campo =
+    document.getElementById(
+      "matriculaManual"
+    );
+
+  const matricula =
+    campo.value.trim();
+
+
+  if (!matricula) {
+
+    alert(
+      "Escribe una matrícula."
+    );
+
+    return;
+  }
+
+
+  if (procesando) {
+    return;
+  }
+
+
+  procesando = true;
+
+  campo.value = "";
+
+  registrar(matricula);
+}
+
+
+// ------------------------------------------
+// RESUMEN
+// ------------------------------------------
+
+async function actualizarResumen() {
+
+  const grupo =
+    document
+      .getElementById(
+        "grupoConsulta"
+      )
+      .value;
+
+
+  try {
+
+    const datos =
+      await llamarScript({
+        accion: "resumen",
+        grupo: grupo
+      });
+
+
+    if (!datos.ok) {
+      return;
+    }
+
+
+    resumenActual = datos;
+
+
+    document
+      .getElementById(
+        "presentes"
+      )
+      .textContent =
+        datos.cantidadPresentes;
+
+
+    document
+      .getElementById(
+        "pendientes"
+      )
+      .textContent =
+        datos.pendientes.length;
+
+
+    document
+      .getElementById(
+        "total"
+      )
+      .textContent =
+        datos.total;
+
+
+    mostrarPendientes();
+
+
+  } catch (error) {
+
+    console.error(error);
+
+  }
+}
+
+
+// ------------------------------------------
+// LISTA PRESENTES
+// ------------------------------------------
+
+function mostrarPresentes() {
+
+  const lista =
+    document.getElementById(
+      "listaAlumnos"
+    );
+
+
+  if (!resumenActual) {
+
+    lista.innerHTML =
+      "Sin información.";
+
+    return;
+  }
+
+
+  if (
+    resumenActual.presentes.length === 0
+  ) {
+
+    lista.innerHTML =
+      "Todavía no hay alumnos presentes.";
+
+    return;
+  }
+
+
+  lista.innerHTML =
+    resumenActual.presentes
+      .map(function(alumno) {
+
+        return (
+          '<div class="alumno">' +
+          '✅ ' +
+          escapar(alumno.nombre) +
+          '</div>'
+        );
+
+      })
+      .join("");
+}
+
+
+// ------------------------------------------
+// LISTA PENDIENTES
+// ------------------------------------------
+
+function mostrarPendientes() {
+
+  const lista =
+    document.getElementById(
+      "listaAlumnos"
+    );
+
+
+  if (!resumenActual) {
+
+    lista.innerHTML =
+      "Sin información.";
+
+    return;
+  }
+
+
+  if (
+    resumenActual.pendientes.length === 0
+  ) {
+
+    lista.innerHTML =
+      "✅ No hay alumnos pendientes.";
+
+    return;
+  }
+
+
+  lista.innerHTML =
+    resumenActual.pendientes
+      .map(function(alumno) {
+
+        return (
+          '<div class="alumno">' +
+          '○ ' +
+          escapar(alumno.nombre) +
+          '</div>'
+        );
+
+      })
+      .join("");
+}
+
+
+// ------------------------------------------
+// FINALIZAR
+// ------------------------------------------
+
+async function confirmarFinalizar() {
+
+  const grupo =
+    document
+      .getElementById(
+        "grupoConsulta"
+      )
+      .value;
+
+
+  const aceptar =
+    confirm(
+      "¿Finalizar el pase de lista de " +
+      grupo +
+      "?\n\n" +
+      "Los alumnos pendientes serán marcados como FALTA."
+    );
+
+
+  if (!aceptar) {
+    return;
+  }
+
+
+  try {
+
+    const datos =
+      await llamarScript({
+        accion: "finalizar",
+        grupo: grupo
+      });
+
+
+    alert(
+      datos.mensaje +
+      "\nFaltas registradas: " +
+      (datos.faltasAgregadas || 0)
+    );
+
+
+    await actualizarResumen();
+
+
+  } catch (error) {
+
+    alert(
+      "No fue posible finalizar el pase de lista."
+    );
+
+  }
+}
+
+
+// Cargar contador al abrir
+actualizarResumen();
+
 </script>
 
 </body>
+
 </html>

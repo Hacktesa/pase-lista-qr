@@ -1028,10 +1028,13 @@ scanner.render(
 // REGISTRO MANUAL
 // =====================================================
 
-function registroManual() {
+async function registroManual() {
 
   const campo =
     document.getElementById("matriculaManual");
+
+  const boton =
+    document.getElementById("btnManual");
 
   const matricula =
     campo.value.trim();
@@ -1039,6 +1042,7 @@ function registroManual() {
   if (!matricula) {
 
     alert("Escribe la matrícula del alumno.");
+    campo.focus();
     return;
   }
 
@@ -1048,15 +1052,45 @@ function registroManual() {
     return;
   }
 
-  if (procesando) {
-    return;
+  // Evita doble clic, pero NO bloquea por el escáner QR
+  boton.disabled = true;
+  boton.textContent = "⏳ Registrando...";
+
+  try {
+
+    const datos =
+      await llamarScript({
+        accion: "registrar",
+        matricula: matricula,
+        idSesion: sesionActual.idSesion
+      });
+
+    mostrarResultado(datos);
+
+    // Solo borrar la matrícula si se encontró/procesó
+    if (
+      datos.ok ||
+      datos.duplicado ||
+      datos.grupoIncorrecto
+    ) {
+      campo.value = "";
+    }
+
+    await actualizarResumen();
+
+  } catch (error) {
+
+    mostrarResultado({
+      ok: false,
+      mensaje: "No se pudo conectar con Google Sheets."
+    });
+
+  } finally {
+
+    boton.disabled = false;
+    boton.textContent = "Registrar asistencia";
+    campo.focus();
   }
-
-  procesando = true;
-
-  campo.value = "";
-
-  registrar(matricula);
 }
 
 

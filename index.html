@@ -776,11 +776,14 @@ function actualizarInterfazSesion() {
       "estadoClase paseCerrado";
 
     estado.innerHTML =
-      "<strong>🟠 PASE DE LISTA CERRADO</strong><br>" +
-      escapar(sesionActual.materia) +
-      "<br>Grupo " +
-      escapar(sesionActual.grupo) +
-      "<br><strong>La clase continúa abierta.</strong>";
+  "<strong>🟠 PASE DE LISTA CERRADO</strong><br>" +
+  escapar(sesionActual.materia) +
+  "<br>Grupo " +
+  escapar(sesionActual.grupo) +
+  "<br>Inicio: <strong>" +
+  formatearHora(sesionActual.horaInicio) +
+  "</strong>" +
+  "<br><strong>La clase continúa abierta.</strong>";
 
     btnIniciar.style.display = "none";
     btnCerrar.style.display = "none";
@@ -797,13 +800,16 @@ function actualizarInterfazSesion() {
     "estadoClase sesionActiva";
 
   estado.innerHTML =
-    "<strong>🟢 SESIÓN ACTIVA</strong><br>" +
-    escapar(sesionActual.materia) +
-    "<br>Grupo " +
-    escapar(sesionActual.grupo) +
-    "<br>Retardo después de " +
-    escapar(sesionActual.minutosRetardo) +
-    " minutos";
+  "<strong>🟢 SESIÓN ACTIVA</strong><br>" +
+  escapar(sesionActual.materia) +
+  "<br>Grupo " +
+  escapar(sesionActual.grupo) +
+  "<br>Inicio: <strong>" +
+  formatearHora(sesionActual.horaInicio) +
+  "</strong>" +
+  "<br>Retardo después de " +
+  escapar(sesionActual.minutosRetardo) +
+  " minutos";
 
   btnIniciar.style.display = "none";
   btnCerrar.style.display = "block";
@@ -1414,8 +1420,38 @@ async function confirmarFinalizarClase() {
     btn.textContent = "⏹️ Finalizar clase";
   }
 }
+// lo que agregué
+function formatearHora(valor) {
 
+  if (!valor) {
+    return "--:--";
+  }
 
+  // Si Apps Script ya envió HH:mm:ss
+  const texto = String(valor);
+
+  if (/^\d{2}:\d{2}(:\d{2})?$/.test(texto)) {
+    return escapar(texto);
+  }
+
+  // Si Apps Script envió una fecha completa
+  const fecha = new Date(valor);
+
+  if (!isNaN(fecha.getTime())) {
+
+    return fecha.toLocaleTimeString(
+      "es-MX",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false
+      }
+    );
+  }
+
+  return escapar(texto);
+}
 // =====================================================
 // ESCAPAR TEXTO
 // =====================================================

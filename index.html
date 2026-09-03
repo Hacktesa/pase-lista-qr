@@ -780,9 +780,9 @@ function actualizarInterfazSesion() {
   escapar(sesionActual.materia) +
   "<br>Grupo " +
   escapar(sesionActual.grupo) +
-  "<br>Inicio: <strong>" +
-  formatearHora(sesionActual.horaInicio) +
-  "</strong>" +
+ "<br>Inicio: <strong>" +
+escapar(sesionActual.horaInicio || "--:--:--") +
+"</strong>" +
   "<br><strong>La clase continúa abierta.</strong>";
 
     btnIniciar.style.display = "none";
@@ -805,8 +805,8 @@ function actualizarInterfazSesion() {
   "<br>Grupo " +
   escapar(sesionActual.grupo) +
   "<br>Inicio: <strong>" +
-  formatearHora(sesionActual.horaInicio) +
-  "</strong>" +
+escapar(sesionActual.horaInicio || "--:--:--") +
+"</strong>" +
   "<br>Retardo después de " +
   escapar(sesionActual.minutosRetardo) +
   " minutos";

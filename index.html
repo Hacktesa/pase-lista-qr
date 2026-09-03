@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Pase de Lista QR - COBACH 234</title>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f5;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .contenedor {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      border-radius: 18px;
+      padding: 22px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 26px;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 18px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 1px solid #bbb;
+    }
+
+    #reader {
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    #resultado {
+      display: none;
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 12px;
+    }
+
+    .exito {
+      background: #dff5e3;
+      color: #176b2c;
+    }
+
+    .duplicado {
+      background: #fff0c2;
+      color: #795900;
+    }
+
+    .error {
+      background: #ffe0e0;
+      color: #9a0000;
+    }
+
+    .nombre {
+      font-size: 21px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .dato {
+      margin-top: 5px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+  <h1>📷 Pase de Lista QR</h1>
+  <h2>Taller de Robótica - COBACH 234</h2>
+
+  <select id="grupo">
+    <option value="5°A">5°A</option>
+    <option value="5°B">5°B</option>
+    <option value="5°C">5°C</option>
+    <option value="5°D">5°D</option>
+  </select>
+
+  <div id="reader"></div>
+
+  <div id="resultado"></div>
+
+</div>
+
+<script>
+
+const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbyi9k4fsH2J-dDIS1WxLJQXmb3O1I2t-hp2mAyOJlcS0Szvgs7_b8UMn5aAglqfcMpnog/exec";
+
+let procesando = false;
+let ultimoCodigo = "";
+let ultimoTiempo = 0;
+
+function mostrarResultado(datos) {
+
+  const resultado = document.getElementById("resultado");
+
+  resultado.style.display = "block";
+
+  if (datos.ok) {
+    resultado.className = "exito";
+  } else if (datos.duplicado) {
+    resultado.className = "duplicado";
+  } else {
+    resultado.className = "error";
+  }
+
+  let html = "";
+
+  if (datos.nombre) {
+    html += '<div class="nombre">' + datos.nombre + '</div>';
+  }
+
+  if (datos.matricula) {
+    html += '<div class="dato">Matrícula: ' + datos.matricula + '</div>';
+  }
+
+  if (datos.grupo) {
+    html += '<div class="dato">Grupo: ' + datos.grupo + '</div>';
+  }
+
+  if (datos.hora) {
+    html += '<div class="dato">Hora: ' + datos.hora + '</div>';
+  }
+
+  html += '<div class="dato"><strong>' +
+          (datos.mensaje || "Respuesta recibida") +
+          '</strong></div>';
+
+  resultado.innerHTML = html;
+}
+
+function registrar(matricula) {
+
+  const grupo = document.getElementById("grupo").value;
+
+  const callback = "respuesta_" + Date.now();
+
+  const script = document.createElement("script");
+
+  window[callback] = function(datos) {
+
+    mostrarResultado(datos);
+
+    delete window[callback];
+
+    script.remove();
+
+    setTimeout(function() {
+      procesando = false;
+    }, 1200);
+  };
+
+  script.onerror = function() {
+
+    mostrarResultado({
+      ok: false,
+      mensaje: "No se pudo conectar con Google Sheets."
+    });
+
+    procesando = false;
+  };
+
+  script.src =
+    URL_SCRIPT +
+    "?accion=registrar" +
+    "&matricula=" + encodeURIComponent(matricula) +
+    "&grupo=" + encodeURIComponent(grupo) +
+    "&callback=" + callback;
+
+  document.body.appendChild(script);
+}
+
+function onScanSuccess(decodedText) {
+
+  const ahora = Date.now();
+
+  if (
+    procesando ||
+    (
+      decodedText === ultimoCodigo &&
+      ahora - ultimoTiempo < 3000
+    )
+  ) {
+    return;
+  }
+
+  procesando = true;
+
+  ultimoCodigo = decodedText;
+  ultimoTiempo = ahora;
+
+  registrar(decodedText.trim());
+}
+
+function onScanFailure(error) {
+  // No hacemos nada mientras la cámara busca un QR.
+}
+
+const scanner = new Html5QrcodeScanner(
+  "reader",
+  {
+    fps: 10,
+    qrbox: {
+      width: 250,
+      height: 250
+    },
+    rememberLastUsedCamera: true
+  },
+  false
+);
+
+scanner.render(
+  onScanSuccess,
+  onScanFailure
+);
+
+</script>
+
+</body>
+</html>
